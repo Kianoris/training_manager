@@ -8,8 +8,6 @@ import {
     TouchableOpacity
 } from 'react-native';
 
-import { inputStyles } from "../constants/Inputs";
-import { buttonStyles } from "../constants/Buttons";
 import LayoutStyles from '../constants/Layout';
 import colors from "../constants/Colors";
 
@@ -23,7 +21,7 @@ export default class SignInScreen extends React.Component {
         this.state = {
             email: '',
             password: ''
-        }
+        };
     }
 
     signInAsync = async () => {
@@ -45,18 +43,19 @@ export default class SignInScreen extends React.Component {
                 <TextInput
                     textContentType="emailAddress"
                     placeholder={'Email'}
-                    style={inputStyles.input}
+                    keyboardType="email-address"
+                    style={styles.input}
                     onChangeText={value => this.handleTextChange(value, 'email')}
                 />
                 <TextInput
                     textContentType="password"
                     placeholder={'Password'}
                     secureTextEntry={true}
-                    style={inputStyles.input}
+                    style={styles.input}
                     onChangeText={value => this.handleTextChange(value, 'password')}
                 />
-                <TouchableOpacity onPress={this.signInAsync} style={buttonStyles.button}>
-                    <Text style={{color: colors.baseTextColor}}>Sign In</Text>
+                <TouchableOpacity onPress={this.signInAsync} style={styles.signInButton}>
+                    <Text style={{color: colors.baseTextColor, fontSize: 24}}>Sign In</Text>
                 </TouchableOpacity>
             </View>
         );
@@ -66,8 +65,17 @@ export default class SignInScreen extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        alignItems: 'center',
         justifyContent: 'center',
         paddingHorizontal: LayoutStyles.basePadding
+    },
+    input: {
+        width: '80%',
+        height: 48,
+        marginBottom: 8,
+        fontSize: 18,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.baseBorderColor
     }
 });
 
