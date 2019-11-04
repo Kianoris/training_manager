@@ -1,0 +1,1 @@
+export const AUTH_USER_REQUEST = 'AUTH_USER_REQUEST';
