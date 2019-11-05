@@ -19,3 +19,8 @@ export const deleteExercise = (id, trainingId) => ({
         trainingId
     }
 });
+
+export const saveExerciseChanges = (dataToUpdate) => ({
+    type: actionsTypes.SAVE_EXERCISE_CHANGES,
+    payload: dataToUpdate
+});

@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import ExerciseScreen from './ExercisesScreen';
 import { createNewKey } from '../../services/utils';
-import { addExercise, deleteExercise } from '../../actions/exercises';
+import { addExercise, deleteExercise, saveExerciseChanges } from '../../actions/exercises';
 import { addExerciseKey, deleteExerciseKey } from '../../actions/trainings';
 import { toggleEditMode } from '../../actions/editMode';
 import { addSet, deleteSet } from '../../actions/sets';
@@ -22,6 +22,9 @@ const mapDispatchToProps = dispatch => ({
     deleteExercise: (id) => {
         dispatch(deleteExercise(id, state.selectedTraining.id));
         dispatch(deleteExerciseKey(id, state.selectedTraining.id));
+    },
+    saveExerciseChanges: (names, sets) => {
+        dispatch(saveExerciseChanges({names, sets}));
     },
     addSet: (exerciseId) => {
         dispatch(addSet(exerciseId))

@@ -2,6 +2,13 @@ import update from 'immutability-helper';
 
 import * as actionTypes from '../actions/exercises/types';
 
+const initialSet = {
+    repeats: 0,
+    weight: 0,
+    execute: 0,
+    rest: 0
+};
+
 export const exercises = (state = {}, action) => {
     switch (action.type) {
         case actionTypes.ADD_EXERCISE: {
@@ -10,7 +17,7 @@ export const exercises = (state = {}, action) => {
                     $set: {
                         id: action.payload.id,
                         name: 'New Exercise',
-                        sets: [{}]
+                        sets: [initialSet]
                     }
                 }
             });
@@ -29,7 +36,7 @@ export const exercises = (state = {}, action) => {
         case actionTypes.ADD_SET: {
             const newState = update(state, {
                 [action.payload.exerciseId]: {
-                    sets: {$push: [{}]} // TODO: replace empty object with real set
+                    sets: {$push: [initialSet]}
                 }
             });
 
@@ -37,14 +44,17 @@ export const exercises = (state = {}, action) => {
         }
 
         case actionTypes.DELETE_SET: {
-            // TODO: handle set removing
-            // const newState = update(state, {
-            //     [action.payload.exerciseId]: {
-            //         sets: {$splice: [{}]}
-            //     }
-            // });
-            //
-            // return newState;
+            const newState = update(state, {
+                [action.payload.exerciseId]: {
+                    sets: {$splice: [[action.payload.setIndex, 1]]}
+                }
+            });
+
+            return newState;
+        }
+
+        case actionTypes.SAVE_EXERCISE_CHANGES: {
+            // TODO: figure this out
             return state;
         }
 

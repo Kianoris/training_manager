@@ -5,7 +5,7 @@ import colors from '../../constants/colors';
 import styles from './styles';
 import BottomActions from '../../components/bottomActions';
 import EmptyScreen from '../../components/emptyScreen';
-// import Exercise from '../components/Exercise';
+import Exercise from '../../components/exercise';
 
 export default class ExercisesScreen extends React.Component {
     static navigationOptions = ({navigation}) => {
@@ -24,15 +24,20 @@ export default class ExercisesScreen extends React.Component {
     constructor() {
         super();
 
-        // this.state = {
-        //     openedExercises: {}
-        // };
-        //
-        // this.editedExercises = {};
+        this.openedExercises = {};
+        this.namesToUpdate = {};
+        this.setsToUpdate = {};
     }
 
     componentDidMount() {
-        // this.props.navigation.setParams({saveChanges: this.saveChanges});
+        this.props.navigation.setParams({
+            saveChanges: () => {
+                this.props.saveExerciseChanges(this.namesToUpdate, this.setsToUpdate);
+                this.props.toggleEditMode(false);
+                this.namesToUpdate = {};
+                this.setsToUpdate = {};
+            }
+        });
     }
 
     componentDidUpdate(prevProps) {
@@ -41,49 +46,21 @@ export default class ExercisesScreen extends React.Component {
         }
     }
 
-    // changeOpenedState = (id) => {
-    //     this.setState({
-    //         openedExercises: {
-    //             ...this.state.openedExercises,
-    //             [id]: !this.state.openedExercises[id]
-    //         }
-    //     });
-    // };
+    changeOpenedState = (id) => {
+        this.openedExercises[id] = !this.openedExercises[id];
+    };
 
-    // handleNameChange = (data) => {
-    //     if (!this.editedExercises[data.id]) {
-    //         this.editedExercises[data.id] = {};
-    //     }
-    //     this.editedExercises[data.id].name = data.name;
-    // };
+    handleNameChange = (data) => {
+        if (data.name !== data.initialName) {
+            this.namesToUpdate[data.id] = data.name;
+        } else if (this.namesToUpdate[data.id]) {
+            delete this.namesToUpdate[data.id];
+        }
+    };
 
-    // saveChanges = async () => {
-    //     if (!Object.keys(this.editedExercises).length) {
-    //         this.enableEditView(false);
-    //         return;
-    //     }
-    //
-    //     const exercises = await saveExercises(this.trainingId, this.editedExercises);
-    //     this.enableEditView(false);
-    //     this.setState({
-    //         exercises
-    //     });
-    // };
-
-    // editSet = (value, property, setIndex, exId) => {
-    //     if (!this.editedExercises[exId]) {
-    //         this.editedExercises[exId] = {};
-    //     }
-    //
-    //     if (!this.editedExercises[exId].sets) {
-    //         this.editedExercises[exId].sets = [...this.state.exercises.find(exercise => exercise.id === exId).sets];
-    //     }
-    //
-    //     this.editedExercises[exId]['sets'][setIndex] = {
-    //         ...this.editedExercises[exId]['sets'][setIndex],
-    //         [property]: value
-    //     };
-    // };
+    editSet = (index, exId, updatedSet) => {
+        this.setsToUpdate[`${exId}_${index}`] = updatedSet;
+    };
 
     render() {
         const isExercisesExist = !!this.props.exercises.length;
@@ -98,13 +75,17 @@ export default class ExercisesScreen extends React.Component {
                                     name={data.name}
                                     sets={data.sets}
                                     isEdit={this.props.isEditMode}
-                                    isOpen={this.state.openedExercises[data.id]}
+                                    isOpen={!!this.openedExercises[data.id]}
                                     opened={() => this.changeOpenedState(data.id)}
                                     deleteExercise={() => this.props.deleteExercise(data.id)}
-                                    nameChanged={(name) => this.handleNameChange({name: name.trim(), id: data.id})}
+                                    nameChanged={(name) => this.handleNameChange({
+                                        name,
+                                        initialName: data.name,
+                                        id: data.id
+                                    })}
                                     addNewSet={() => this.props.addSet(data.id)}
                                     deleteSet={(index) => this.props.deleteSet(data.id, index)}
-                                    valueOfSetChanged={(value, property, setIndex) => this.editSet(value, property, setIndex, data.id)}
+                                    valueOfSetChanged={(updatedSet, index) => this.editSet(index, data.id, updatedSet)}
                                 />
                             );
                         })
